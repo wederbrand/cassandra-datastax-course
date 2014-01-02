@@ -9,6 +9,10 @@ create table track_by_genre (track text, artist text, track_id UUID, track_lengt
 alter table track_by_artist add starred boolean;
 alter table track_by_genre add starred boolean;
 
+alter table users add playlist_names set<text>;
+
+create table playlist_tracks (username text, playlist_name text, sequence_no timestamp, artist text, track_name text, genre text, track_length_in_seconds int, track_id UUID, primary key ((username, playlist_name), sequence_no ));
+
 copy track_by_id (track_id, genre, artist, track, track_length_in_seconds, music_file) FROM 'songs.csv' WITH DELIMITER = '|' AND HEADER=true;
 copy track_by_artist (track_id, genre, artist, track, track_length_in_seconds, music_file) FROM 'songs.csv' WITH DELIMITER = '|'  AND HEADER=true;
 copy track_by_genre (track_id, genre, artist, track, track_length_in_seconds, music_file) FROM 'songs.csv' WITH DELIMITER = '|'  AND HEADER=true;

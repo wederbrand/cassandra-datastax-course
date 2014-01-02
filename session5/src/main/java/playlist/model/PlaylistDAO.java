@@ -122,17 +122,12 @@ public class PlaylistDAO extends CassandraData {
     // Change single quotes to a pair of single quotes for escaping into the database
     String fixed_playlist_name = this.playlist_name.replace("'","''");
 
-    // TODO
-    // TODO -  In the string below (where it says <fill this in here>
-    // TODO -  add an a atomic block statement which will remove the playlist from a the playlists set
-    // TODO -  in the users table, and remove the playlist from the playlist_tracks table.
-    // TODO -  hint: the bind() method is already filled in, so think about the parameter markers
-    // TODO -  you'll need in the atomic block.
-    // TODO
+    PreparedStatement preparedStatement = getSession().prepare("begin batch\n" +
+		    "DELETE playlist_names from users where username = ?;\n" +
+		    "DELETE from playlist_tracks where username = ? and playlist_name = ?;\n" +
+		    "apply batch;");
 
-    PreparedStatement preparedStatement = getSession().prepare("<fill this in here>");
-
-    BoundStatement bs = preparedStatement.bind(this.username, this.username, this.playlist_name);
+    BoundStatement bs = preparedStatement.bind(this.username, this.username, fixed_playlist_name);
 
     getSession().execute(bs);
 
@@ -182,22 +177,21 @@ public class PlaylistDAO extends CassandraData {
     for (int i = 0; i < this.playlistTrackList.size(); i++) {
 
       // extract the time of from the current playlist track's sequence number, and compare it to the given time
-      if (this.playlistTrackList.get(i).sequence_no.getTime() == sequenceNumberToDelete) {
+      if (this.playlistTrackList.get(i).getSequence_no() == sequenceNumberToDelete) {
 
         // If it's correct, set playlistTrackToDelete, remove it from the playlist, and stop looping
         playlistTrackToDelete = this.playlistTrackList.get(i);
         this.playlistTrackList.remove(i);
+	      // first adjust the playlist length
+	      playlist_length_in_seconds -= playlistTrackToDelete.getTrack_length_in_seconds();
+
+	      // remove it from the database
+	      PreparedStatement ps = getSession().prepare("DELETE from playlist_tracks where username = ? and playlist_name = ? and sequence_no = ?");
+	      BoundStatement bs = ps.bind(this.username, this.playlist_name, new Date(sequenceNumberToDelete));
+	      getSession().execute(bs);
         break;
       }
     }
-
-    // first adjust the playlist length
-    playlist_length_in_seconds -= playlistTrackToDelete != null ? playlistTrackToDelete.getTrack_length_in_seconds() : 0;
-
-    // remove it from the database
-    PreparedStatement ps = getSession().prepare("DELETE from playlist_tracks where username = ? and playlist_name = ? and sequence_no = ?");
-    BoundStatement bs = ps.bind(this.username, this.playlist_name, new Date(sequenceNumberToDelete));
-    getSession().execute(bs);
 
   }
 

@@ -1,0 +1,31 @@
+<%--@elvariable id="frame" type="String"--%>
+
+<%--
+
+DataStax Academy Sample Application
+
+Copyright 2013 DataStax
+
+--%>
+
+<c:if test="${empty frame}">
+    <div id="topmatter" class="alphabet">
+        <a id="homebutton" href="home">Home</a>
+        <a id="add_track" href="add_track">Add a Song</a>
+    </div>
+</c:if>
+
+<%@ include file="lists.jspf" %>
+
+<div class="alphabet">
+    <c:forTokens items="${genres}" delims="," var="g">
+        <a href="<c:url value="tracks"><c:param name="genre" value="${g}"/>
+        <c:param name="frame" value="${frame}"/></c:url>">${g}</a>
+    </c:forTokens>
+    <hr/>
+    <c:forTokens items="${letters}" delims="," var="l">
+        <a href="<c:url value="artists"><c:param name="q" value="${l}"/><c:param name="frame" value="${frame}"/></c:url>">${l}</a>&nbsp;&nbsp;
+    </c:forTokens>
+    <hr/>
+</div>
+

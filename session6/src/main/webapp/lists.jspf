@@ -1,0 +1,2 @@
+<c:set var="genres" scope="application" value="classic pop and rock,classical,dance and electronica,folk,hip-hop,jazz and blues,metal,pop,punk,soul and reggae"/>
+<c:set var="letters" scope="application" value="A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z"/>

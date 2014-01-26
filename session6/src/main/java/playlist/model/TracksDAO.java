@@ -89,6 +89,8 @@ public class TracksDAO extends CassandraData {
     //  TODO - Add a line here to automatically page the results 200 rows at a time
     //
 
+	  boundStatement.setFetchSize(200);
+
     ResultSet results = getSession().execute(boundStatement);
 
     List<TracksDAO> tracks = new ArrayList<>();

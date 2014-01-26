@@ -112,15 +112,9 @@ public class UserDAO extends CassandraData {
   private static UserDAO getUserWithQuorum(String username) {
 
     String queryText = "SELECT * FROM users where username = '"
-            + username + "'";
+            + username + "' using consistency quorum";
 
-    // TODO
-    // TODO - take the queryText above and turn it into something
-    // TODO - set the consistency level on that something to QUORUM
-    // TODO - execute that something in the line below.
-    // TODO
-
-    Row userRow = getSession().execute("<something>").one();    // TODO - replace the "<something>" with the right thing.
+    Row userRow = getSession().execute(queryText).one();    // TODO - replace the "<something>" with the right thing.
 
     if (userRow == null) {
       return null;
